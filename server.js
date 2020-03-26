@@ -10,20 +10,26 @@ app.use(fileupload());
 
 
 // ======================================================================================
-// @desc      Upload photo for bootcamp
+// @desc      Upload photo for server
 // @route     PUT /api/upload/
 // @access    Local
 // ======================================================================================
+app.post('/api/upload/', function(req, res) {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
 
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  let sampleFile = req.files.sampleFile;
 
-app.put('/api/upload/', (req, res) => {
+  // Use the mv() method to place the file somewhere on your server
+  sampleFile.mv('/public/uploads/filename.xlsx', function(err) {
+    if (err)
+      return res.status(500).send(err);
 
-  res.send('Hello World!')
-
-  console.log(req.files.foo); // the uploaded file object
-
-})
-
+    res.send('File uploaded!');
+  });
+});
 
 // ======================================================================================
 
@@ -39,7 +45,7 @@ app.put('/api/upload/', (req, res) => {
 app.use(express.static(__dirname + '/public'));
 app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
-app.post('/api/xlstojson', function (req, res) {
+app.post('/api/show', function (req, res) {
   xlsxtojson({
     input: "./excel-to-json.xlsx",  // input xls 
     output: "output.json", // output json 
