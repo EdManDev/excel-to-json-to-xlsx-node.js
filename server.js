@@ -40,7 +40,7 @@ app.post("/api/uploads/", (req, res) => {
 	}
 
 	fs.writeFile(
-		"./public/uploads/" + req.files.file.name,
+		"./uploads/" + req.files.file.name,
 		req.files.file.data,
 
 		function (err) {
@@ -61,8 +61,8 @@ app.post("/api/uploads/", (req, res) => {
 app.get("/api/show", function (req, res) {
 	xlsxtojson(
 		{
-			input: "./public/uploads/excel-to-json.xlsx", // input xls
-			output: "output.json", // output json
+			input: "./uploads/excel-to-json.xlsx", // input xls
+			output: "./uploads/excel-to-json.json", // output json
 			lowerCaseHeaders: true,
 		},
 		(err, result) => {

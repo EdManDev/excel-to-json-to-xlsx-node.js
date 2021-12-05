@@ -27,3 +27,8 @@ npm run dev
 ```
   POST      /api/uploads
 ```
+
+```
+input everywhere but i already have .xslx document in doc folder
+my .json file & .xslx file are stored in uploads Folder
+```
