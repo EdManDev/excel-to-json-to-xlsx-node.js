@@ -6,9 +6,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 const morgan = require("morgan");
 var xlsxtojson = require("xlsx-to-json");
-var xlstojson = require("xls-to-json");
+
 const fileupload = require("express-fileupload");
+const cors = require("cors");
+
+// middleware
 app.use(morgan("dev"));
+app.use(cors(""));
 
 // File uploading
 app.use(fileupload());
@@ -23,57 +27,45 @@ app.get("/api/", (req, res) => {
 });
 
 // ======================================================================================
-// app.use(function (req, res, next) {
-// 	//allow cross origin requests
-// 	res.setHeader("Access-Control-Allow-Origin", "*");
-// 	res.header("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-// 	res.header("Access-Control-Max-Age", "3600");
-// 	res.header(
-// 		"Access-Control-Allow-Headers",
-// 		"Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-// 	);
-// 	next();
-// });
-
-// configuration
-app.use(express.static(__dirname + "/public"));
-app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
-
+// @desc      GET Employee Photo
+// @route     GET /api/uploads/   [Body: form-data | KEY: file, VALUE: exel-to-json.xlsx]
+// @access    Public
 // ======================================================================================
-// @desc      Upload photo for server
-// @route     PUT /api/upload/
-// @access    Local
+var fs = require("fs");
+app.use("/Photos", express.static(__dirname + "/Photos"));
 // ======================================================================================
-app.post("/api/upload/", function (req, res) {
+app.post("/api/uploads/", (req, res) => {
 	if (!req.files || Object.keys(req.files).length === 0) {
 		return res.status(400).send("No files were uploaded.");
 	}
 
-	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-	let sampleFile = req.files.sampleFile;
+	fs.writeFile(
+		"./public/uploads/" + req.files.file.name,
+		req.files.file.data,
 
-	// Use the mv() method to place the file somewhere on your server
-	//(---------------------------- METHODE DEPRECATED-------------------------------------)
-	sampleFile.mv("/public/uploads/", function (err) {
-		if (err) return res.status(500).send(err);
-
-		res.send("File uploaded!");
-	});
+		function (err) {
+			if (err) {
+				res.json(err);
+			}
+			// res.json(req.files.file.name);
+			res.send({ message: "file uploaded" });
+		}
+	);
 });
 
 // ====================================================================================
 // @desc      Show data from XSLX Document
-// @route     POST /api/upload/
+// @route     POST /api/show/
 // @access    Local
 // ====================================================================================
 app.get("/api/show", function (req, res) {
 	xlsxtojson(
 		{
-			input: "./excel-to-json.xlsx", // input xls
+			input: "./public/uploads/excel-to-json.xlsx", // input xls
 			output: "output.json", // output json
 			lowerCaseHeaders: true,
 		},
-		function (err, result) {
+		(err, result) => {
 			if (err) {
 				res.json(err);
 			} else {

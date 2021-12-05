@@ -21,13 +21,9 @@ npm run dev
 ### Authentication Admin
 
 ```
-  GET      /api/
-```
-
-```
-  PUT      /api/upload
-```
-
-```
   GET      /api/show
+```
+
+```
+  POST      /api/uploads
 ```
